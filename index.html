@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Project Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --surface-2: #f0eee9;
+    --border: #e2dfd8;
+    --text: #1d1c1a;
+    --muted: #6b6760;
+    --accent: #3b5bdb;
+    --accent-soft: #e7ecfd;
+    --ok: #2b8a3e;
+    --ok-soft: #e3f4e6;
+    --warn: #a15c00;
+    --warn-soft: #fbefdc;
+    --lock: #6741d9;
+    --lock-soft: #efe9fd;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212;
+      --surface: #1b1b1c;
+      --surface-2: #232325;
+      --border: #2e2e31;
+      --text: #ecebe8;
+      --muted: #9a978f;
+      --accent: #8ea2ff;
+      --accent-soft: #232a45;
+      --ok: #69db7c;
+      --ok-soft: #1c2e20;
+      --warn: #f0b354;
+      --warn-soft: #332714;
+      --lock: #b197fc;
+      --lock-soft: #2a2340;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 16px 64px; }
+  header { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between; margin-bottom: 32px; }
+  h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .sub { margin: 4px 0 0; color: var(--muted); }
+  .search {
+    width: 280px; max-width: 100%;
+    padding: 10px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    font: inherit;
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  section { margin-top: 36px; }
+  h2 {
+    font: 500 12px/1 "Roboto Mono", monospace; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 0 0 14px; display: flex; gap: 8px; align-items: center;
+  }
+  h2 .count { color: var(--muted); opacity: .7; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .card {
+    position: relative;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 16px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color .15s, transform .15s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .card h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; }
+  .card h3 a:focus-visible { outline: none; }
+  .card:has(h3 a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; align-items: center; }
+  .tag {
+    font: 500 11px/1 "Roboto Mono", monospace; padding: 5px 8px; border-radius: 6px;
+    background: var(--surface-2); color: var(--muted); white-space: nowrap;
+  }
+  .tag.org { background: var(--accent-soft); color: var(--accent); }
+  .tag.public { background: var(--ok-soft); color: var(--ok); }
+  .tag.auth { background: var(--lock-soft); color: var(--lock); }
+  .tag.note { background: var(--warn-soft); color: var(--warn); }
+  .host { font: 400 12px/1.3 "Roboto Mono", monospace; color: var(--muted); word-break: break-all; }
+  .repo {
+    position: relative; z-index: 1;
+    font: 500 12px/1 "Roboto Mono", monospace; color: var(--accent); text-decoration: none;
+    margin-left: auto;
+  }
+  .repo:hover { text-decoration: underline; }
+  .empty { color: var(--muted); padding: 24px 0; display: none; }
+  footer { margin-top: 56px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Project Hub</h1>
+      <p class="sub">Tools, dashboards and sites I have built. Each one handles its own sign-in.</p>
+    </div>
+    <input class="search" id="q" type="search" placeholder="Filter projects" aria-label="Filter projects" autocomplete="off">
+  </header>
+
+  <main id="groups"></main>
+  <p class="empty" id="empty">No projects match that filter.</p>
+
+  <footer>Last updated <span id="updated"></span>. To add a project, add an entry to <code>PROJECTS</code> in <code>index.html</code>.</footer>
+</div>
+
+<script>
+const UPDATED = "2026-11-25";
+
+// One entry per project. `access` is what a visitor hits on arrival.
+// Kinds: "public" | "auth" | "note"
+const PROJECTS = [
+  // AE Insights
+  {
+    group: "AE Insights",
+    name: "Saporo AE Insights",
+    desc: "Call summary, objections and settings for Saporo SDR and AE calls. Research briefs are generated from booked meetings.",
+    url: "https://saporo-gtm-sdr-intel-dashboard.vercel.app",
+    org: "Saporo",
+    access: ["auth", "Email sign-in"],
+    repo: "https://github.com/OHdot-io/saporo-gtm-sdr-intel-dashboard",
+  },
+  {
+    group: "AE Insights",
+    name: "CVAT AE Insights",
+    desc: "Call summary, objections, brief email and full research for CVAT calls pulled from HubSpot.",
+    url: "https://cvat-gtm-sdr-intel-dashboard.vercel.app",
+    org: "CVAT",
+    access: ["auth", "Email sign-in"],
+    repo: "https://github.com/OHdot-io/cvat-gtm-sdr-intel-dashboard",
+  },
+  {
+    group: "AE Insights",
+    name: "Everworker AE Insights",
+    desc: "SDR Intel reporting dashboard for Everworker, cloned from the Saporo build.",
+    url: "https://everworker-gtm-sdr-intel-dashboard.vercel.app",
+    org: "Everworker",
+    access: ["auth", "Vercel login"],
+    repo: "https://github.com/OHdot-io/everworker-gtm-sdr-intel-dashboard",
+  },
+
+  // Enablement
+  {
+    group: "Enablement",
+    name: "Saporo Internal Enablement",
+    desc: "Competitive lookups, education explainers, prompts and sales tools for the Saporo team.",
+    url: "https://saporo-internal-enablement.jsnell-7b5.workers.dev/",
+    org: "Saporo",
+    access: ["auth", "Cloudflare Access"],
+    repo: "https://github.com/jon-oh-io/saporo-internal-enablement",
+  },
+  {
+    group: "Enablement",
+    name: "Saporo Platform Demo",
+    desc: "Presenter-led click-through demo of the Saporo platform for AEs to rehearse and run live.",
+    url: "https://saporo-internal-enablement.jsnell-7b5.workers.dev/platform-demo",
+    org: "Saporo",
+    access: ["auth", "Cloudflare Access"],
+    repo: "https://github.com/OHdot-io/saporo-gtm-demo-presenter",
+  },
+  {
+    group: "Enablement",
+    name: "OH.io Internal Enablement",
+    desc: "Claude setup guide, shared-skill walkthrough and slides for the OH.io team.",
+    url: "https://github.com/jon-oh-io/ohio-internal-enablement",
+    org: "OH.io",
+    access: ["note", "Repo only, not hosted"],
+    repo: null,
+  },
+
+  // Dashboards
+  {
+    group: "Dashboards",
+    name: "Saporo Threat Intel",
+    desc: "Retro terminal dashboard of identity security, breach, AI, competitor and regulatory news. Refreshed each weekday.",
+    url: "https://saporo-threat-intel.vercel.app",
+    org: "Saporo",
+    access: ["public", "Public"],
+    repo: "https://github.com/OHdot-io/saporo-threat-intel",
+  },
+
+  // Other
+  {
+    group: "Other",
+    name: "Foosball Matches",
+    desc: "Match tracker for office foosball.",
+    url: "https://jon-oh-io.github.io/Foosball-Matches/",
+    org: "Personal",
+    access: ["public", "Public"],
+    repo: "https://github.com/jon-oh-io/Foosball-Matches",
+  },
+];
+
+const GROUP_ORDER = ["AE Insights", "Enablement", "Dashboards", "Other"];
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else n.setAttribute(k, v);
+  }
+  for (const k of kids) n.append(k);
+  return n;
+};
+
+function hostOf(url) {
+  try { const u = new URL(url); return u.host + (u.pathname !== "/" ? u.pathname.replace(/\/$/, "") : ""); }
+  catch { return url; }
+}
+
+function card(p) {
+  const meta = el("div", { class: "meta" },
+    el("span", { class: "tag org" }, p.org),
+    el("span", { class: "tag " + p.access[0] }, p.access[1]),
+  );
+  if (p.repo) meta.append(el("a", { class: "repo", href: p.repo, target: "_blank", rel: "noopener" }, "repo"));
+  return el("article", { class: "card", "data-search": [p.name, p.desc, p.org, p.group, p.access[1]].join(" ").toLowerCase() },
+    el("h3", {}, el("a", { href: p.url, target: "_blank", rel: "noopener" }, p.name)),
+    el("p", {}, p.desc),
+    el("div", { class: "host" }, hostOf(p.url)),
+    meta,
+  );
+}
+
+function render() {
+  const root = document.getElementById("groups");
+  const groups = [...new Set([...GROUP_ORDER, ...PROJECTS.map(p => p.group)])];
+  for (const g of groups) {
+    const items = PROJECTS.filter(p => p.group === g);
+    if (!items.length) continue;
+    const grid = el("div", { class: "grid" }, ...items.map(card));
+    root.append(el("section", { "data-group": g },
+      el("h2", {}, g, el("span", { class: "count" }, String(items.length))),
+      grid,
+    ));
+  }
+  document.getElementById("updated").textContent =
+    new Date(UPDATED + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
+function filter(q) {
+  q = q.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll("section[data-group]").forEach(sec => {
+    let n = 0;
+    sec.querySelectorAll(".card").forEach(c => {
+      const hit = !q || c.dataset.search.includes(q);
+      c.style.display = hit ? "" : "none";
+      if (hit) n++;
+    });
+    sec.style.display = n ? "" : "none";
+    sec.querySelector(".count").textContent = n;
+    shown += n;
+  });
+  document.getElementById("empty").style.display = shown ? "none" : "block";
+}
+
+render();
+document.getElementById("q").addEventListener("input", e => filter(e.target.value));
+</script>
+</body>
+</html>
