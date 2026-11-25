@@ -7,113 +7,192 @@
 <title>Project Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f5f2;
+    --bg: #f7f6f3;
     --surface: #ffffff;
-    --surface-2: #f0eee9;
-    --border: #e2dfd8;
-    --text: #1d1c1a;
-    --muted: #6b6760;
-    --accent: #3b5bdb;
-    --accent-soft: #e7ecfd;
-    --ok: #2b8a3e;
-    --ok-soft: #e3f4e6;
-    --warn: #a15c00;
-    --warn-soft: #fbefdc;
-    --lock: #6741d9;
-    --lock-soft: #efe9fd;
-    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+    --border: #e6e2da;
+    --text: #1b1a18;
+    --muted: #6a665e;
+    --chip: #f1efea;
+    --shadow: 0 1px 2px rgba(20,16,10,.05), 0 8px 24px rgba(20,16,10,.06);
+    --blob-a: rgba(255,107,91,.28);
+    --blob-b: rgba(139,92,246,.24);
+    --blob-c: rgba(20,184,166,.22);
+    --tint: 9%;
+    --tint-hover: 15%;
+
+    /* Portco colors: --c is the main hue, --c2 the gradient end */
+    --saporo: #f2545b;   --saporo-2: #8b5cf6;
+    --cvat: #0d9488;     --cvat-2: #22c3e6;
+    --everworker: #e08a00; --everworker-2: #f5c518;
+    --ohio: #2f6fed;     --ohio-2: #5b8cff;
+    --personal: #2f9e44; --personal-2: #94d82d;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #121212;
-      --surface: #1b1b1c;
-      --surface-2: #232325;
-      --border: #2e2e31;
-      --text: #ecebe8;
-      --muted: #9a978f;
-      --accent: #8ea2ff;
-      --accent-soft: #232a45;
-      --ok: #69db7c;
-      --ok-soft: #1c2e20;
-      --warn: #f0b354;
-      --warn-soft: #332714;
-      --lock: #b197fc;
-      --lock-soft: #2a2340;
-      --shadow: none;
+      --bg: #0f0f12;
+      --surface: #18181c;
+      --border: #2a2a30;
+      --text: #efeee9;
+      --muted: #a09d95;
+      --chip: #24242a;
+      --shadow: 0 8px 24px rgba(0,0,0,.35);
+      --blob-a: rgba(242,84,91,.22);
+      --blob-b: rgba(139,92,246,.22);
+      --blob-c: rgba(13,148,136,.2);
+      --tint: 13%;
+      --tint-hover: 20%;
+
+      --saporo: #ff6f74;   --saporo-2: #a78bfa;
+      --cvat: #2dd4bf;     --cvat-2: #38bdf8;
+      --everworker: #ffb020; --everworker-2: #ffd84d;
+      --ohio: #6b9bff;     --ohio-2: #93b4ff;
+      --personal: #51cf66; --personal-2: #a9e34b;
     }
   }
   * { box-sizing: border-box; }
+  html { background: var(--bg); }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
+    margin: 0; min-height: 100vh;
+    background: var(--bg); color: var(--text);
     font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 16px 64px; }
-  header { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between; margin-bottom: 32px; }
-  h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
-  .sub { margin: 4px 0 0; color: var(--muted); }
+  .blobs { position: absolute; inset: 0 0 auto 0; height: 420px; pointer-events: none; overflow: hidden; z-index: 0; }
+  .blobs span { position: absolute; border-radius: 50%; filter: blur(70px); }
+  .blobs span:nth-child(1) { width: 420px; height: 420px; background: var(--blob-a); top: -180px; left: -80px; }
+  .blobs span:nth-child(2) { width: 380px; height: 380px; background: var(--blob-b); top: -140px; left: 38%; }
+  .blobs span:nth-child(3) { width: 360px; height: 360px; background: var(--blob-c); top: -120px; right: -100px; }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 56px 16px 72px; }
+
+  header { display: flex; flex-wrap: wrap; gap: 20px; align-items: end; justify-content: space-between; }
+  .eyebrow { font: 500 12px/1 "Roboto Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  h1 {
+    margin: 0; font-size: clamp(34px, 6vw, 52px); font-weight: 800; letter-spacing: -.035em; line-height: 1;
+    background: linear-gradient(90deg, var(--saporo), var(--saporo-2) 45%, var(--cvat) 80%, var(--everworker));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { margin: 12px 0 0; color: var(--muted); max-width: 480px; }
   .search {
     width: 280px; max-width: 100%;
-    padding: 10px 14px; border-radius: 10px;
+    padding: 11px 14px; border-radius: 12px;
     border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    font: inherit;
+    font: inherit; box-shadow: var(--shadow);
   }
-  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
-  section { margin-top: 36px; }
+  .search:focus { outline: 2px solid var(--saporo-2); outline-offset: 1px; border-color: transparent; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 8px; }
+  .legend button {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px 7px 10px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    font: 500 13px/1 Inter, sans-serif; cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .legend button .dot { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--c), var(--c2)); }
+  .legend button .n { font-family: "Roboto Mono", monospace; font-size: 11px; color: var(--muted); }
+  .legend button:hover { border-color: var(--c); }
+  .legend button[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 16%, var(--surface)); border-color: var(--c); }
+  .legend button.all { --c: var(--text); --c2: var(--muted); }
+
+  section { margin-top: 40px; }
   h2 {
-    font: 500 12px/1 "Roboto Mono", monospace; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--muted); margin: 0 0 14px; display: flex; gap: 8px; align-items: center;
+    display: flex; align-items: center; gap: 12px;
+    font: 700 20px/1.2 Inter, sans-serif; letter-spacing: -.02em; margin: 0 0 16px;
   }
-  h2 .count { color: var(--muted); opacity: .7; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  h2 .count {
+    font: 500 11px/1 "Roboto Mono", monospace; color: var(--muted);
+    background: var(--chip); padding: 5px 8px; border-radius: 6px;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
   .card {
-    position: relative;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-    padding: 18px 18px 16px; box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+    background: color-mix(in srgb, var(--c) var(--tint), var(--surface));
+    border: 1px solid color-mix(in srgb, var(--c) 28%, var(--border));
+    border-radius: 16px; padding: 22px 20px 16px;
+    box-shadow: var(--shadow);
     display: flex; flex-direction: column; gap: 10px;
-    transition: border-color .15s, transform .15s;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .card:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .card h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 5px;
+    background: linear-gradient(90deg, var(--c), var(--c2));
+  }
+  .card::after {
+    content: ""; position: absolute; width: 160px; height: 160px; right: -60px; top: -70px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--c2) 35%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    background: color-mix(in srgb, var(--c) var(--tint-hover), var(--surface));
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--c) 25%, transparent);
+  }
+  .card:has(h3 a:focus-visible) { outline: 2px solid var(--c); outline-offset: 3px; }
+
+  .card .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .org {
+    font: 600 11px/1 "Roboto Mono", monospace; letter-spacing: .04em; text-transform: uppercase;
+    padding: 6px 9px; border-radius: 6px; color: #fff;
+    background: linear-gradient(90deg, var(--c), var(--c2));
+  }
+  .card h3 { margin: 2px 0 0; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
   .card h3 a { color: inherit; text-decoration: none; }
-  .card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; }
+  .card h3 a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
   .card h3 a:focus-visible { outline: none; }
-  .card:has(h3 a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
   .card p { margin: 0; color: var(--muted); font-size: 14px; }
-  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; align-items: center; }
-  .tag {
-    font: 500 11px/1 "Roboto Mono", monospace; padding: 5px 8px; border-radius: 6px;
-    background: var(--surface-2); color: var(--muted); white-space: nowrap;
+  .host { font: 400 12px/1.35 "Roboto Mono", monospace; color: color-mix(in srgb, var(--c) 70%, var(--muted)); word-break: break-all; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; align-items: center; }
+  .access {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: 500 11px/1 "Roboto Mono", monospace; padding: 6px 8px; border-radius: 6px;
+    background: color-mix(in srgb, var(--surface) 70%, transparent); color: var(--muted);
+    border: 1px solid var(--border);
   }
-  .tag.org { background: var(--accent-soft); color: var(--accent); }
-  .tag.public { background: var(--ok-soft); color: var(--ok); }
-  .tag.auth { background: var(--lock-soft); color: var(--lock); }
-  .tag.note { background: var(--warn-soft); color: var(--warn); }
-  .host { font: 400 12px/1.3 "Roboto Mono", monospace; color: var(--muted); word-break: break-all; }
+  .access svg { width: 12px; height: 12px; }
+  .access.public { color: var(--personal); }
+  .access.note { color: var(--everworker); }
   .repo {
-    position: relative; z-index: 1;
-    font: 500 12px/1 "Roboto Mono", monospace; color: var(--accent); text-decoration: none;
-    margin-left: auto;
+    position: relative; z-index: 2;
+    font: 500 12px/1 "Roboto Mono", monospace; text-decoration: none;
+    color: var(--c); margin-left: auto; padding: 6px 4px;
   }
   .repo:hover { text-decoration: underline; }
-  .empty { color: var(--muted); padding: 24px 0; display: none; }
-  footer { margin-top: 56px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 18px; }
+
+  .org-saporo     { --c: var(--saporo);     --c2: var(--saporo-2); }
+  .org-cvat       { --c: var(--cvat);       --c2: var(--cvat-2); }
+  .org-everworker { --c: var(--everworker); --c2: var(--everworker-2); }
+  .org-ohio       { --c: var(--ohio);       --c2: var(--ohio-2); }
+  .org-personal   { --c: var(--personal);   --c2: var(--personal-2); }
+
+  .empty { color: var(--muted); padding: 32px 0; display: none; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 18px; }
+  footer code { font-family: "Roboto Mono", monospace; font-size: 12px; }
+
+  @media (prefers-reduced-motion: reduce) { .card, .card:hover { transition: none; transform: none; } }
 </style>
 </head>
 <body>
+<div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
 <div class="wrap">
   <header>
     <div>
+      <p class="eyebrow">GTM Engineering &middot; Projects</p>
       <h1>Project Hub</h1>
       <p class="sub">Tools, dashboards and sites I have built. Each one handles its own sign-in.</p>
     </div>
     <input class="search" id="q" type="search" placeholder="Filter projects" aria-label="Filter projects" autocomplete="off">
   </header>
+
+  <nav class="legend" id="legend" aria-label="Filter by company"></nav>
 
   <main id="groups"></main>
   <p class="empty" id="empty">No projects match that filter.</p>
@@ -124,8 +203,16 @@
 <script>
 const UPDATED = "2026-11-25";
 
-// One entry per project. `access` is what a visitor hits on arrival.
-// Kinds: "public" | "auth" | "note"
+// Company key -> label. Colors live in CSS as .org-<key>.
+const ORGS = {
+  saporo: "Saporo",
+  cvat: "CVAT",
+  everworker: "Everworker",
+  ohio: "OH.io",
+  personal: "Personal",
+};
+
+// One entry per project. access: [kind, label], kind = "auth" | "public" | "note"
 const PROJECTS = [
   // AE Insights
   {
@@ -133,7 +220,7 @@ const PROJECTS = [
     name: "Saporo AE Insights",
     desc: "Call summary, objections and settings for Saporo SDR and AE calls. Research briefs are generated from booked meetings.",
     url: "https://saporo-gtm-sdr-intel-dashboard.vercel.app",
-    org: "Saporo",
+    org: "saporo",
     access: ["auth", "Email sign-in"],
     repo: "https://github.com/OHdot-io/saporo-gtm-sdr-intel-dashboard",
   },
@@ -142,7 +229,7 @@ const PROJECTS = [
     name: "CVAT AE Insights",
     desc: "Call summary, objections, brief email and full research for CVAT calls pulled from HubSpot.",
     url: "https://cvat-gtm-sdr-intel-dashboard.vercel.app",
-    org: "CVAT",
+    org: "cvat",
     access: ["auth", "Email sign-in"],
     repo: "https://github.com/OHdot-io/cvat-gtm-sdr-intel-dashboard",
   },
@@ -151,7 +238,7 @@ const PROJECTS = [
     name: "Everworker AE Insights",
     desc: "SDR Intel reporting dashboard for Everworker, cloned from the Saporo build.",
     url: "https://everworker-gtm-sdr-intel-dashboard.vercel.app",
-    org: "Everworker",
+    org: "everworker",
     access: ["auth", "Vercel login"],
     repo: "https://github.com/OHdot-io/everworker-gtm-sdr-intel-dashboard",
   },
@@ -162,7 +249,7 @@ const PROJECTS = [
     name: "Saporo Internal Enablement",
     desc: "Competitive lookups, education explainers, prompts and sales tools for the Saporo team.",
     url: "https://saporo-internal-enablement.jsnell-7b5.workers.dev/",
-    org: "Saporo",
+    org: "saporo",
     access: ["auth", "Cloudflare Access"],
     repo: "https://github.com/jon-oh-io/saporo-internal-enablement",
   },
@@ -171,7 +258,7 @@ const PROJECTS = [
     name: "Saporo Platform Demo",
     desc: "Presenter-led click-through demo of the Saporo platform for AEs to rehearse and run live.",
     url: "https://saporo-internal-enablement.jsnell-7b5.workers.dev/platform-demo",
-    org: "Saporo",
+    org: "saporo",
     access: ["auth", "Cloudflare Access"],
     repo: "https://github.com/OHdot-io/saporo-gtm-demo-presenter",
   },
@@ -180,7 +267,7 @@ const PROJECTS = [
     name: "OH.io Internal Enablement",
     desc: "Claude setup guide, shared-skill walkthrough and slides for the OH.io team.",
     url: "https://github.com/jon-oh-io/ohio-internal-enablement",
-    org: "OH.io",
+    org: "ohio",
     access: ["note", "Repo only, not hosted"],
     repo: null,
   },
@@ -191,7 +278,7 @@ const PROJECTS = [
     name: "Saporo Threat Intel",
     desc: "Retro terminal dashboard of identity security, breach, AI, competitor and regulatory news. Refreshed each weekday.",
     url: "https://saporo-threat-intel.vercel.app",
-    org: "Saporo",
+    org: "saporo",
     access: ["public", "Public"],
     repo: "https://github.com/OHdot-io/saporo-threat-intel",
   },
@@ -200,9 +287,9 @@ const PROJECTS = [
   {
     group: "Other",
     name: "Foosball Matches",
-    desc: "Match tracker for office foosball.",
+    desc: "Head-to-head match tracker for office foosball.",
     url: "https://jon-oh-io.github.io/Foosball-Matches/",
-    org: "Personal",
+    org: "personal",
     access: ["public", "Public"],
     repo: "https://github.com/jon-oh-io/Foosball-Matches",
   },
@@ -210,10 +297,18 @@ const PROJECTS = [
 
 const GROUP_ORDER = ["AE Insights", "Enablement", "Dashboards", "Other"];
 
+const ICONS = {
+  auth: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>',
+  public: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 2 10 0 12M8 2c-2 2-2 10 0 12"/></svg>',
+  note: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5M8 11h.01"/></svg>',
+};
+
 const el = (tag, attrs = {}, ...kids) => {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
-    if (k === "class") n.className = v; else n.setAttribute(k, v);
+    if (k === "class") n.className = v;
+    else if (k === "html") n.innerHTML = v;
+    else n.setAttribute(k, v);
   }
   for (const k of kids) n.append(k);
   return n;
@@ -225,17 +320,44 @@ function hostOf(url) {
 }
 
 function card(p) {
-  const meta = el("div", { class: "meta" },
-    el("span", { class: "tag org" }, p.org),
-    el("span", { class: "tag " + p.access[0] }, p.access[1]),
-  );
-  if (p.repo) meta.append(el("a", { class: "repo", href: p.repo, target: "_blank", rel: "noopener" }, "repo"));
-  return el("article", { class: "card", "data-search": [p.name, p.desc, p.org, p.group, p.access[1]].join(" ").toLowerCase() },
+  const [kind, label] = p.access;
+  const access = el("span", { class: "access " + kind, html: ICONS[kind] });
+  access.append(label);
+  const meta = el("div", { class: "meta" }, access);
+  if (p.repo) meta.append(el("a", { class: "repo", href: p.repo, target: "_blank", rel: "noopener" }, "repo ↗"));
+  return el("article", {
+      class: "card org-" + p.org,
+      "data-org": p.org,
+      "data-search": [p.name, p.desc, ORGS[p.org], p.group, label].join(" ").toLowerCase(),
+    },
+    el("div", { class: "top" }, el("span", { class: "org" }, ORGS[p.org])),
     el("h3", {}, el("a", { href: p.url, target: "_blank", rel: "noopener" }, p.name)),
     el("p", {}, p.desc),
     el("div", { class: "host" }, hostOf(p.url)),
     meta,
   );
+}
+
+let activeOrg = null;
+
+function renderLegend() {
+  const nav = document.getElementById("legend");
+  const all = el("button", { class: "all", type: "button", "aria-pressed": "true", "data-org": "" },
+    el("span", { class: "dot" }), "All", el("span", { class: "n" }, String(PROJECTS.length)));
+  nav.append(all);
+  for (const [key, label] of Object.entries(ORGS)) {
+    const n = PROJECTS.filter(p => p.org === key).length;
+    if (!n) continue;
+    nav.append(el("button", { class: "org-" + key, type: "button", "aria-pressed": "false", "data-org": key },
+      el("span", { class: "dot" }), label, el("span", { class: "n" }, String(n))));
+  }
+  nav.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    activeOrg = b.dataset.org || null;
+    nav.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    applyFilter();
+  });
 }
 
 function render() {
@@ -244,23 +366,22 @@ function render() {
   for (const g of groups) {
     const items = PROJECTS.filter(p => p.group === g);
     if (!items.length) continue;
-    const grid = el("div", { class: "grid" }, ...items.map(card));
     root.append(el("section", { "data-group": g },
       el("h2", {}, g, el("span", { class: "count" }, String(items.length))),
-      grid,
+      el("div", { class: "grid" }, ...items.map(card)),
     ));
   }
   document.getElementById("updated").textContent =
     new Date(UPDATED + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
-function filter(q) {
-  q = q.trim().toLowerCase();
+function applyFilter() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
   let shown = 0;
   document.querySelectorAll("section[data-group]").forEach(sec => {
     let n = 0;
     sec.querySelectorAll(".card").forEach(c => {
-      const hit = !q || c.dataset.search.includes(q);
+      const hit = (!q || c.dataset.search.includes(q)) && (!activeOrg || c.dataset.org === activeOrg);
       c.style.display = hit ? "" : "none";
       if (hit) n++;
     });
@@ -271,8 +392,9 @@ function filter(q) {
   document.getElementById("empty").style.display = shown ? "none" : "block";
 }
 
+renderLegend();
 render();
-document.getElementById("q").addEventListener("input", e => filter(e.target.value));
+document.getElementById("q").addEventListener("input", applyFilter);
 </script>
 </body>
 </html>
